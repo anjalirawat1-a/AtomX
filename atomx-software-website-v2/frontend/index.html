@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0e1418" />
+  <meta name="description" content="AtomX mine subsidence monitoring and early-warning software prototype." />
+  <title>AtomX | Mine Safety Console</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 13h3l2-6 4 12 3-9 2 5h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-node" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-2.8-2.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3v-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L7.2 4l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L20 7.2l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4h-.2a1.7 1.7 0 0 0-1.8.8Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="AtomX home">
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <span><strong>AtomX</strong><small>mine safety systems</small></span>
+    </a>
+    <nav class="public-nav" aria-label="Main navigation">
+      <a href="#platform">Platform</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#field-demo">Field demo</a>
+    </nav>
+    <button class="btn btn-dark" id="launchConsole">Open control room <svg><use href="#i-arrow"/></svg></button>
+  </header>
+
+  <main id="home">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <div class="kicker"><span class="live-dot"></span> SIH 2026 · Prototype system</div>
+        <h1>Ground movement should be visible <em>before</em> it becomes dangerous.</h1>
+        <p class="hero-lede">AtomX combines low-cost field sensors, LoRa telemetry, edge processing and a mine-safety console for continuous deformation monitoring and early warning.</p>
+        <div class="hero-actions">
+          <button class="btn btn-accent" id="runDemo">Run interactive demo <svg><use href="#i-arrow"/></svg></button>
+          <a class="text-link" href="#workflow">See how the data moves</a>
+        </div>
+        <div class="hero-meta">
+          <div><span>04</span><small>demo sensor nodes</small></div>
+          <div><span>LoRa</span><small>field communication</small></div>
+          <div><span>Edge</span><small>gateway buffering</small></div>
+          <div><span>Web</span><small>risk + alerts</small></div>
+        </div>
+      </div>
+
+      <div class="site-plan" aria-label="Interactive mine monitoring plan">
+        <div class="plan-topbar"><span>North panel · demo layout</span><span class="mono" id="heroClock">--:--:--</span></div>
+        <svg class="contours" viewBox="0 0 620 460" role="img" aria-label="Stylized mine monitoring plan">
+          <path d="M24 238C75 153 169 109 271 119s161 75 249 51 94 39 75 104-74 111-154 107-129-32-207-3S68 352 31 304 11 259 24 238Z"/>
+          <path d="M62 239c44-62 120-95 203-86s140 63 215 45 80 27 66 78-61 83-123 79-110-24-173-1-134 43-165 6-39-78-23-121Z"/>
+          <path d="M103 239c37-42 99-64 164-57s115 50 174 36 65 20 54 58-49 60-100 57-90-17-140 0-105 30-131 3-33-58-21-97Z"/>
+          <path d="M154 242c24-25 66-37 109-32s74 31 112 22 43 12 35 37-33 38-67 36-58-11-91 0-68 20-85 2-21-37-13-65Z"/>
+        </svg>
+        <div class="plan-road road-a"></div><div class="plan-road road-b"></div>
+        <button class="plan-node node-a" data-node="NODE-01" aria-label="Open NODE-01 details"><i></i><span>N1</span></button>
+        <button class="plan-node node-b" data-node="NODE-02" aria-label="Open NODE-02 details"><i></i><span>N2</span></button>
+        <button class="plan-node node-c" data-node="NODE-03" aria-label="Open NODE-03 details"><i></i><span>N3</span></button>
+        <button class="plan-node node-d" data-node="NODE-04" aria-label="Open NODE-04 details"><i></i><span>N4</span></button>
+        <div class="plan-gateway"><span>GW</span><small>edge gateway</small></div>
+        <div class="plan-status">
+          <div><span>overall risk</span><strong id="heroRisk">18</strong><small>/100</small></div>
+          <div><span>highest tilt</span><strong id="heroTilt">0.42°</strong></div>
+        </div>
+        <div class="plan-legend"><span><i class="ok"></i>normal</span><span><i class="warn"></i>warning</span><span><i class="critical"></i>critical</span></div>
+      </div>
+    </section>
+
+    <section class="signal-strip" aria-label="System status">
+      <div><span class="mono">FIELD</span><strong>MPU6050 · ADXL345 · linear displacement</strong></div>
+      <div><span class="mono">LINK</span><strong>LoRa / SX1278</strong></div>
+      <div><span class="mono">EDGE</span><strong>Raspberry Pi</strong></div>
+      <div><span class="mono">SERVER</span><strong>FastAPI · risk engine</strong></div>
+      <div><span class="mono">OUTPUT</span><strong>GIS · alerts · trend history</strong></div>
+    </section>
+
+    <section class="section shell" id="platform">
+      <div class="section-label">01 / PLATFORM</div>
+      <div class="split-heading">
+        <h2>Built around the operator’s next decision.</h2>
+        <p>The software does not stop at “showing sensor values”. It turns field measurements into a traceable risk state, highlights the affected zone and keeps the alert history visible.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature feature-large">
+          <div class="feature-num">01</div>
+          <div>
+            <span class="feature-tag">LIVE TELEMETRY</span>
+            <h3>One screen for tilt, displacement, vibration and crack trend.</h3>
+            <p>Each node keeps its identity, latest packet time, signal strength and local trend. Operators can drill into a node instead of reading a generic dashboard.</p>
+          </div>
+          <div class="mini-chart" id="landingMiniChart" aria-hidden="true"></div>
+        </article>
+        <article class="feature"><div class="feature-num">02</div><span class="feature-tag">RISK ENGINE</span><h3>Trend-aware risk state</h3><p>Correlates multiple parameters and surfaces the reason behind an elevated state.</p></article>
+        <article class="feature"><div class="feature-num">03</div><span class="feature-tag">ZONE VIEW</span><h3>Spatial context</h3><p>Pinpoints which monitoring zone needs inspection rather than raising a mine-wide generic warning.</p></article>
+        <article class="feature"><div class="feature-num">04</div><span class="feature-tag">INCIDENT LOG</span><h3>Acknowledge and export</h3><p>Alerts can be acknowledged and exported with the current sensor snapshot for review.</p></article>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="workflow">
+      <div class="shell">
+        <div class="section-label light">02 / WORKFLOW</div>
+        <div class="split-heading light"><h2>From movement in the field to a visible warning.</h2><p>The demo below follows the same path intended for the hardware prototype. Use the controls to inject a safe or dangerous condition.</p></div>
+        <div class="workflow-grid" id="workflowSteps">
+          <article class="workflow-step active"><span>01</span><b>Sense</b><p>Node samples tilt, vibration and displacement.</p></article>
+          <article class="workflow-step"><span>02</span><b>Transmit</b><p>LoRa packet reaches the edge gateway.</p></article>
+          <article class="workflow-step"><span>03</span><b>Process</b><p>Gateway filters, buffers and forwards telemetry.</p></article>
+          <article class="workflow-step"><span>04</span><b>Evaluate</b><p>Server calculates risk and checks anomalies.</p></article>
+          <article class="workflow-step"><span>05</span><b>Warn</b><p>Zone state and alert queue update together.</p></article>
+        </div>
+        <div class="workflow-actions">
+          <button class="scenario-chip active" data-scenario="normal">Safe baseline</button>
+          <button class="scenario-chip" data-scenario="progressive">Progressive deformation</button>
+          <button class="scenario-chip" data-scenario="vibration">Vibration anomaly</button>
+          <button class="scenario-chip danger" data-scenario="critical">Critical event</button>
+          <span class="workflow-note">Demo scenarios are simulated; hardware mode uses live API data.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="architecture">
+      <div class="section-label">03 / ARCHITECTURE</div>
+      <div class="split-heading"><h2>Software that fits the hardware — not a separate showcase.</h2><p>The browser console is the last layer of the sensing pipeline. Every tile corresponds to a real source or process in the proposed system.</p></div>
+      <div class="architecture-board">
+        <div class="arch-card"><span>FIELD</span><b>Sensor node</b><p>ESP32 / STM32<br>MPU6050 · ADXL345<br>Linear potentiometer</p><small>physical measurements</small></div>
+        <div class="arch-line"><i></i><small>LoRa</small></div>
+        <div class="arch-card"><span>EDGE</span><b>Gateway</b><p>Raspberry Pi<br>filtering + local buffer<br>packet forwarding</p><small>temporary offline resilience</small></div>
+        <div class="arch-line"><i></i><small>HTTP/MQTT</small></div>
+        <div class="arch-card accent"><span>SOFTWARE</span><b>AtomX server</b><p>FastAPI<br>risk classification<br>history + alerts</p><small>API-first backend</small></div>
+        <div class="arch-line"><i></i><small>REST</small></div>
+        <div class="arch-card"><span>OPERATOR</span><b>Control room</b><p>mine zone view<br>telemetry trends<br>alert acknowledgement</p><small>decision support</small></div>
+      </div>
+    </section>
+
+    <section class="section field-demo" id="field-demo">
+      <div class="shell demo-banner">
+        <div><div class="section-label light">04 / FIELD DEMO</div><h2>Move one sensor. Watch the whole software chain react.</h2><p>Use a physical node for the normal live demonstration, then use a simulated hazard scenario for conditions that are unsafe to reproduce during judging.</p></div>
+        <button class="btn btn-accent" id="launchConsole2">Launch control room <svg><use href="#i-arrow"/></svg></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    <div><strong>AtomX</strong><span>AI-enabled low-cost mine subsidence monitoring & early warning</span></div>
+    <div class="mono">SIH26025 · SOFTWARE PROTOTYPE</div>
+  </footer>
+
+  <section class="console" id="console" aria-hidden="true">
+    <aside class="console-sidebar">
+      <div class="console-brand"><span class="brand-mark"><span></span><span></span><span></span></span><div><strong>AtomX</strong><small>CONTROL ROOM</small></div></div>
+      <nav class="console-nav" id="consoleNav">
+        <button class="active" data-view="overview"><svg><use href="#i-grid"/></svg><span>Overview</span></button>
+        <button data-view="telemetry"><svg><use href="#i-wave"/></svg><span>Telemetry</span></button>
+        <button data-view="nodes"><svg><use href="#i-node"/></svg><span>Nodes</span></button>
+        <button data-view="alerts"><svg><use href="#i-bell"/></svg><span>Alerts</span><em id="alertCount">0</em></button>
+        <button data-view="system"><svg><use href="#i-settings"/></svg><span>System</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="gateway-card"><span><i class="live-dot"></i> Gateway</span><b id="gatewayState">Connected</b><small id="gatewayDetail">demo feed · packet every 1s</small></div>
+        <button class="sidebar-close" id="closeConsole">← Back to website</button>
+      </div>
+    </aside>
+
+    <div class="console-main">
+      <header class="console-topbar">
+        <div><span class="crumb">North panel / <b id="activeViewName">Overview</b></span><small class="mono" id="consoleClock">--:--:--</small></div>
+        <div class="console-actions">
+          <div class="feed-switch" role="group" aria-label="Data source"><button class="active" data-feed="demo">Demo feed</button><button data-feed="api">Hardware API</button></div>
+          <button class="icon-btn" id="pauseFeed" title="Pause live feed"><svg><use href="#i-pause"/></svg></button>
+          <button class="btn btn-small" id="exportSnapshot"><svg><use href="#i-download"/></svg> Export snapshot</button>
+        </div>
+      </header>
+
+      <div class="console-banner" id="consoleBanner"><span class="banner-icon">✓</span><div><b id="bannerTitle">System operating normally</b><p id="bannerText">All demo nodes are within the configured monitoring bands.</p></div><button id="dismissBanner">Dismiss</button></div>
+
+      <div class="console-content">
+        <section class="console-view active" data-view-panel="overview">
+          <div class="page-heading"><div><span class="eyebrow">LIVE STATUS</span><h2>Mine overview</h2></div><div class="last-packet"><span>Last packet</span><b class="mono" id="lastPacket">just now</b></div></div>
+
+          <div class="overview-grid">
+            <article class="console-card risk-card">
+              <div class="card-head"><div><span class="card-kicker">OVERALL RISK</span><h3 id="riskLabel">Normal</h3></div><span class="status-pill ok" id="riskPill">LOW</span></div>
+              <div class="risk-layout"><div class="risk-ring" id="riskRing"><div><strong id="riskScore">18</strong><span>/100</span></div></div><div class="risk-copy"><p id="riskReason">All monitored parameters are inside the expected operating range.</p><div class="risk-stat"><span>30 min trend</span><b id="trend30">+4</b></div><div class="risk-stat"><span>Dominant zone</span><b>Zone B</b></div></div></div>
+            </article>
+
+            <article class="console-card status-card"><div class="card-head"><div><span class="card-kicker">NETWORK</span><h3>Node health</h3></div><button class="card-link" data-view-jump="nodes">View all</button></div><div class="node-health-list" id="nodeHealthList"></div></article>
+
+            <article class="console-card mine-map-card">
+              <div class="card-head"><div><span class="card-kicker">ZONE MAP</span><h3>North panel</h3></div><span class="mono map-scale">approx. layout</span></div>
+              <div class="console-map" id="consoleMap">
+                <svg viewBox="0 0 820 420" class="map-lines"><path d="M20 227c100-146 205-162 317-91s178 45 277 12 182 44 177 123-88 112-175 95-128-42-232-8-202 32-277-5S-12 279 20 227Z"/><path d="M73 228c83-108 176-122 266-63s148 37 229 14 148 32 144 90-72 81-143 69-107-31-191-6-166 24-226-3-106-63-79-101Z"/></svg>
+                <div class="zone-label z-a">ZONE A</div><div class="zone-label z-b" id="zoneBLabel">ZONE B</div><div class="zone-label z-c">ZONE C</div>
+                <button class="map-node m1" data-node="NODE-01"><span></span><b>N1</b></button>
+                <button class="map-node m2" data-node="NODE-02"><span></span><b>N2</b></button>
+                <button class="map-node m3" data-node="NODE-03"><span></span><b>N3</b></button>
+                <button class="map-node m4" data-node="NODE-04"><span></span><b>N4</b></button>
+                <div class="map-gateway"><b>GW</b><small>Pi gateway</small></div>
+              </div>
+            </article>
+
+            <article class="console-card chart-card">
+              <div class="card-head"><div><span class="card-kicker">NODE-02 TREND</span><h3>Telemetry</h3></div><div class="chart-tabs"><button class="active" data-series="tilt">Tilt</button><button data-series="disp">Displacement</button><button data-series="vib">Vibration</button></div></div>
+              <div class="big-chart"><div class="y-labels"><span>high</span><span>mid</span><span>0</span></div><svg viewBox="0 0 760 230" preserveAspectRatio="none"><defs><linearGradient id="fillTrend" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#d7a74a" stop-opacity=".24"/><stop offset="100%" stop-color="#d7a74a" stop-opacity="0"/></linearGradient></defs><path class="chart-area" id="chartArea" d=""/><polyline id="trendLine" points=""/></svg><div class="chart-x"><span>-35s</span><span>-25s</span><span>-15s</span><span>now</span></div></div>
+              <div class="chart-footer"><span><i></i><b id="chartCurrent">0.42°</b> current</span><span>auto scale · 1s samples</span></div>
+            </article>
+
+            <article class="console-card alert-card"><div class="card-head"><div><span class="card-kicker">LATEST EVENT</span><h3>Alert queue</h3></div><button class="card-link" data-view-jump="alerts">Open log</button></div><div id="latestAlert"></div></article>
+          </div>
+        </section>
+
+        <section class="console-view" data-view-panel="telemetry">
+          <div class="page-heading"><div><span class="eyebrow">SENSOR DATA</span><h2>Live telemetry</h2></div><div class="scenario-inline" id="scenarioInline"><button class="active" data-scenario="normal">Baseline</button><button data-scenario="progressive">Deformation</button><button data-scenario="vibration">Vibration</button><button class="danger" data-scenario="critical">Critical</button></div></div>
+          <div class="metric-row" id="metricRow"></div>
+          <div class="console-card telemetry-chart-card"><div class="card-head"><div><span class="card-kicker">NODE-02</span><h3>Last 36 samples</h3></div><span class="mono" id="sampleRate">1.0 s sample period</span></div><div class="telemetry-chart" id="telemetryChart"></div></div>
+          <div class="console-card telemetry-table-card"><div class="card-head"><div><span class="card-kicker">PACKET LOG</span><h3>Recent telemetry</h3></div><span class="mono">newest first</span></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Node</th><th>Tilt</th><th>Displacement</th><th>Vibration</th><th>Crack</th><th>RSSI</th><th>State</th></tr></thead><tbody id="packetTable"></tbody></table></div></div>
+        </section>
+
+        <section class="console-view" data-view-panel="nodes">
+          <div class="page-heading"><div><span class="eyebrow">FIELD NETWORK</span><h2>Sensor nodes</h2></div><span class="mono">4 demo nodes · 1 gateway</span></div>
+          <div class="nodes-grid" id="nodesGrid"></div>
+        </section>
+
+        <section class="console-view" data-view-panel="alerts">
+          <div class="page-heading"><div><span class="eyebrow">EVENT HISTORY</span><h2>Alerts & acknowledgements</h2></div><button class="btn btn-small" id="ackAll">Acknowledge all visible</button></div>
+          <div class="alert-summary" id="alertSummary"></div>
+          <div class="console-card alert-log-card"><div id="alertLog"></div></div>
+        </section>
+
+        <section class="console-view" data-view-panel="system">
+          <div class="page-heading"><div><span class="eyebrow">INTEGRATION</span><h2>System & API</h2></div><span class="mono">prototype configuration</span></div>
+          <div class="system-grid">
+            <article class="console-card"><span class="card-kicker">DATA SOURCE</span><h3>Hardware API connection</h3><p class="muted-copy">Switch the console from simulated telemetry to your FastAPI backend when the Raspberry Pi gateway is connected.</p><label class="field-label" for="apiUrl">Backend base URL</label><div class="input-row"><input id="apiUrl" value="http://127.0.0.1:8000" /><button class="btn btn-small" id="testApi">Test</button></div><div class="connection-result" id="connectionResult">Not tested yet.</div></article>
+            <article class="console-card"><span class="card-kicker">EXPECTED PACKET</span><h3>Gateway payload</h3><pre class="code-block">{
+  "node_id": "NODE-02",
+  "tilt_deg": 0.42,
+  "displacement_mm": 1.8,
+  "vibration_g": 0.07,
+  "temperature_c": 31.6,
+  "humidity_pct": 65,
+  "rssi_dbm": -79
+}</pre></article>
+            <article class="console-card system-flow"><span class="card-kicker">PIPELINE</span><h3>Live data path</h3><div class="flow-row"><b>Sensor</b><i></i><b>LoRa</b><i></i><b>Pi</b><i></i><b>API</b><i></i><b>Console</b></div><p class="muted-copy">If the network drops, the gateway can continue buffering locally and forward packets when the connection returns.</p></article>
+            <article class="console-card"><span class="card-kicker">DEMO CONTROLS</span><h3>Scenario injector</h3><p class="muted-copy">Use only for presentation/testing. It is disabled when Hardware API mode is active.</p><div class="scenario-stack"><button data-scenario="normal">Safe baseline</button><button data-scenario="progressive">Progressive deformation</button><button data-scenario="vibration">Abnormal vibration</button><button data-scenario="critical" class="danger">Critical subsidence signature</button></div></article>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <aside class="drawer" id="nodeDrawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="card-kicker">FIELD NODE</span><h3 id="drawerNodeTitle">NODE-02</h3></div><button class="icon-btn" id="closeDrawer" aria-label="Close node details"><svg><use href="#i-x"/></svg></button></div>
+    <div class="drawer-status"><span><i class="live-dot"></i> online</span><span class="mono" id="drawerRssi">-79 dBm</span></div>
+    <div class="drawer-metrics" id="drawerMetrics"></div>
+    <div class="drawer-block"><span class="card-kicker">INSTALLATION</span><dl><div><dt>Zone</dt><dd id="drawerZone">Zone B</dd></div><div><dt>Device</dt><dd>ESP32 + LoRa</dd></div><div><dt>Sensors</dt><dd>MPU6050 / ADXL345 / displacement</dd></div><div><dt>Last packet</dt><dd id="drawerPacket">just now</dd></div></dl></div>
+    <button class="btn btn-accent drawer-jump" id="drawerTelemetry">Open telemetry view</button>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
