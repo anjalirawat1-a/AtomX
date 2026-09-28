@@ -1,6 +1,8 @@
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
+const API_BASE = 'https://atomx-11.onrender.com';
+
 const state = {
   activeScenario: 'normal',
   feed: 'demo',
@@ -206,7 +208,8 @@ $$('.feed-switch button').forEach(b=>b.onclick=async()=>{
 });
 
 async function pollApi(){
-  if(state.feed!=='api'||state.paused)return; const base=$('#apiUrl').value.replace(/\/$/,'');
+  if(state.feed!=='api'||state.paused)return;
+  const base = API_BASE;
   try{
     const [nodes,risk,alerts]=await Promise.all([fetch(`${base}/api/nodes`).then(r=>r.json()),fetch(`${base}/api/risk`).then(r=>r.json()),fetch(`${base}/api/alerts`).then(r=>r.json())]);
     if(Array.isArray(nodes)&&nodes.length){nodes.forEach(x=>{if(state.nodes[x.node_id])Object.assign(state.nodes[x.node_id],{tilt:x.tilt_deg,disp:x.displacement_mm,vib:x.vibration_g,rssi:x.rssi_dbm??state.nodes[x.node_id].rssi,temp:x.temperature_c??state.nodes[x.node_id].temp,humidity:x.humidity_pct??state.nodes[x.node_id].humidity})}); const n=state.nodes['NODE-02'];state.histories.tilt.push(n.tilt);state.histories.disp.push(n.disp);state.histories.vib.push(n.vib);Object.values(state.histories).forEach(a=>{if(a.length>36)a.shift()});updateNodeUI();updateMetrics();updateCharts()}
@@ -215,16 +218,56 @@ async function pollApi(){
 }
 setInterval(pollApi,2000);
 
-$('#testApi').onclick=async()=>{const base=$('#apiUrl').value.replace(/\/$/,'');$('#connectionResult').textContent='Testing…';try{const r=await fetch(`${base}/api/health`);if(!r.ok)throw new Error();const j=await r.json();$('#connectionResult').textContent=`Connected: ${j.service||'AtomX API'} · ${j.status||'ok'}`;toast('API connection successful',base)}catch(e){$('#connectionResult').textContent='Could not reach the backend. Check the URL, server and CORS settings.';toast('API connection failed','Backend did not respond.')}};
+$('#testApi').onclick = async () => {
+  const base = API_BASE;
+
+  $('#apiUrl').value = API_BASE;
+  $('#connectionResult').textContent = 'Testing…';
+
+  try {
+    const r = await fetch(`${base}/api/health`);
+
+    if (!r.ok) throw new Error();
+
+    const j = await r.json();
+
+    $('#connectionResult').textContent =
+      `Connected: ${j.service || 'AtomX API'} · ${j.status || 'ok'}`;
+
+    toast('API connection successful', base);
+
+  } catch (e) {
+    $('#connectionResult').textContent =
+      'Could not reach the backend. Check the URL, server and CORS settings.';
+
+    toast('API connection failed', 'Backend did not respond.');
+  }
+};
 
 $('#exportSnapshot').onclick=()=>{
   const payload={generated_at:new Date().toISOString(),data_source:state.feed,scenario:state.feed==='demo'?state.activeScenario:null,risk:scenarios[state.activeScenario],nodes:state.nodes,recent_alerts:state.alerts.slice(0,10)};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`atomx-snapshot-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;a.click();URL.revokeObjectURL(a.href);toast('Snapshot exported','JSON file created from the current console state.');
 };
-
 function init(){
-  updateScenarioButtons();updateRiskUI();updateNodeUI();updateMetrics();updateBanner();updateAlertPanels();updateMapStates();
+
+  // Always use the deployed Render backend
+  $('#apiUrl').value = API_BASE;
+
+  updateScenarioButtons();
+  updateRiskUI();
+  updateNodeUI();
+  updateMetrics();
+  updateBanner();
+  updateAlertPanels();
+  updateMapStates();
+
   for(let i=0;i<36;i++)createPacket();
-  setInterval(()=>{if(!state.paused&&state.feed==='demo')createPacket();},1000);
+
+  setInterval(()=>{
+    if(!state.paused&&state.feed==='demo')createPacket();
+  },1000);
 }
+
+
+
 init();
